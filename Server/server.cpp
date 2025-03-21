@@ -10,7 +10,7 @@
 #define DEFAULT_BUFLEN 512
 
 
-int main() {
+int __cdecl main(void) {
 
     // Создали объект WSADATA с именем wsaData.
     WSADATA wsaData;
