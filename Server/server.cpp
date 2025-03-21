@@ -1,39 +1,48 @@
+#undef UNICODE
+
+#define WIN32_LEAN_AND_MEAN
+
+#include <windows.h>
 #include <winsock2.h> // содержит большинство функций, структур и определений Winsock
 #include <ws2tcpip.h> // содержит определения, представленные в документе Приложения WinSock Protocol-Specific 2 для TCP/IP, который включает более новые функции и структуры, используемые для извлечения IP-адресов.
 #include <stdio.h> // используется для стандартных входных и выходных данных, в частности функции printf().
-
+#include <stdlib.h>
 #pragma comment(lib, "Ws2_32.lib") // Комментарий #pragma указывает компоновщику, что требуется файл Ws2_32.lib.
-#define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27015"
+#define DEFAULT_BUFLEN 512
+
+
 int main() {
 
-	// Создали объект WSADATA с именем wsaData.
-	WSADATA wsaData;
+    // Создали объект WSADATA с именем wsaData.
+    WSADATA wsaData;
 
-	//Вызываем WSAStartup и возвращаем его значение в виде целого числа, чтобы проверить наличие ошибок.
-	int iResult;
+    //Вызываем WSAStartup и возвращаем его значение в виде целого числа, чтобы проверить наличие ошибок.
+    int iResult;
 
-	
-	SOCKET ListenSocket = INVALID_SOCKET;
-	SOCKET ClientSocket = INVALID_SOCKET;
-	struct addrinfo* result = NULL;
-	struct addrinfo hints;
 
-	int iSendResult;
-	char recvbuf[DEFAULT_BUFLEN];
-	int recvbuflen = DEFAULT_BUFLEN;
+    SOCKET ListenSocket = INVALID_SOCKET;
+    SOCKET ClientSocket = INVALID_SOCKET;
 
-	// Инициализация Winsock
-	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (iResult != 0) {
-		printf("WSAStartup failed: %d\n", iResult);
-		return 1;
-	}
-	ZeroMemory(&hints, sizeof(hints));
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_protocol = IPPROTO_TCP;
-	hints.ai_flags = AI_PASSIVE;
+    struct addrinfo* result = NULL;
+    struct addrinfo hints;
+
+    int iSendResult;
+    char recvbuf[DEFAULT_BUFLEN];
+    int recvbuflen = DEFAULT_BUFLEN;
+
+    // Инициализация Winsock
+    iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (iResult != 0) {
+        printf("WSAStartup failed: %d\n", iResult);
+        return 1;
+    }
+
+    ZeroMemory(&hints, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = IPPROTO_TCP;
+    hints.ai_flags = AI_PASSIVE;
 
     // Resolve the server address and port
     iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
@@ -125,6 +134,5 @@ int main() {
     closesocket(ClientSocket);
     WSACleanup();
 
-
-	return 0;
+    return 0;
 }
